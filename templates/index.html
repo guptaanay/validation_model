@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload and Cleaning</title>
+</head>
+<body style="background: #bfdbfe; min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; margin: 0;">
+    <div style="max-width: 700px; width: 100%; margin: 20px; background: #ffffff; border-radius: 16px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1); padding: 32px; transition: transform 0.3s ease;">
+        <div style="display: flex; justify-content: center; margin-bottom: 24px;">
+            <img src="{{ url_for('static', filename='e2eweblogo.png') }}" alt="Company Logo" style="height: 48px; width: auto;">
+        </div>
+        <h1 style="font-size: 28px; font-weight: 700; color: #1f2937; text-align: center; margin-bottom: 24px;">File Upload and Cleaning</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul style="list-style: none; padding: 0; margin-bottom: 24px;">
+                    {% for category, message in messages %}
+                        {% if category == 'success' %}
+                        <li style="padding: 12px; margin-bottom: 12px; border-radius: 8px; font-size: 14px; background: #d1fae5; color: #065f46;">{{ message }}</li>
+                        {% else %}
+                        <li style="padding: 12px; margin-bottom: 12px; border-radius: 8px; font-size: 14px; background: #fee2e2; color: #991b1b;">{{ message }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+        <form method="post" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 20px;">
+            <div>
+                <label for="file" style="display: block; font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">Upload CSV or Excel File:</label>
+                <input type="file" id="file" name="file" accept=".csv,.xlsx,.xls" required
+                       style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; transition: border-color 0.2s ease, box-shadow 0.2s ease; outline: none; box-sizing: border-box; height: 48px;"
+                       onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.2);'"
+                       onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none';">
+            </div>
+            <div>
+                <label for="output_format" style="display: block; font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">Output Format:</label>
+                <select id="output_format" name="output_format"
+                        style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; transition: border-color 0.2s ease, box-shadow 0.2s ease; outline: none; box-sizing: border-box; height: 48px;"
+                        onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.2);'"
+                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none';">
+                    <option value="xlsx">Excel (.xlsx)</option>
+                    <option value="txt">Tab-Delimited Text (.txt)</option>
+                </select>
+            </div>
+            <button type="submit"
+                    style="width: 100%; background: #10b981; color: #ffffff; padding: 12px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s ease;"
+                    onmouseover="this.style.background='#059669';"
+                    onmouseout="this.style.background='#10b981';">Validate File</button>
+        </form>
+        {% if get_flashed_messages()|select("equalto", "✅ File cleaned successfully. Download available.")|list %}
+            <a href="{{ url_for('download', original_filename=request.args.get('original_filename', 'corrected_file')) }}"
+               style="display: block; text-align: center; margin-top: 24px; color: #3b82f6; font-size: 14px; font-weight: 500; text-decoration: none; transition: color 0.2s ease;"
+               onmouseover="this.style.color='#1d4ed8'; this.style.textDecoration='underline';"
+               onmouseout="this.style.color='#3b82f6'; this.style.textDecoration='none';">Download Corrected File</a>
+        {% endif %}
+    </div>
+</body>
+</html>
